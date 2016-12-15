@@ -19,11 +19,18 @@ decrypt_all_real_rooms(Input) ->
     ValidRooms = lists:filter(fun valid_room/1, Rooms),
     lists:map(fun decrypt/1, ValidRooms).
 
+%%====================================================================
+%% Internal functions
+%%====================================================================
+
 decrypt(RealRoom) ->
-    {match,[[EString, Shift]]} =
+    {match,[[EString, ShiftStr]]} =
         re:run(RealRoom, "([a-z-]*)([\\d]{1,3})",
                [global,{capture, [1,2], list}]),
-    {string:strip(decrypt(EString, list_to_integer(Shift))), list_to_integer(Shift)}.
+    ShiftInt = list_to_integer(ShiftStr),
+    {string:strip(decrypt(EString, 
+                          ShiftInt)), 
+     ShiftInt}.
 
 decrypt(Estring, Shift) ->
     lists:map(fun($-) ->
@@ -42,15 +49,8 @@ sum_of_real_room_sector_ids(Input) ->
                                              [{capture, first, list}]), 
                         list_to_integer(E) end, ValidRooms)).
 
-
-%%====================================================================
-%% Internal functions
-%%====================================================================
-
 rshift_n_times(C,N) ->
     ((C - $a + N) rem 26) + $a.
-
-
 
 valid_room(L) ->
     [EncryptName, Hash] = re:split(L,
