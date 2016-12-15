@@ -2,15 +2,35 @@
 
 %% API exports
 -export([sum_of_real_room_sector_ids/1,
-         rshift_n_times/2]).
+         north_pole_id/1
+        ]).
 
 %%====================================================================
 %% API functions
 %%====================================================================
-rshift_n_times(C,N) when C+N > 122 ->
-    (((C+N)-122) rem 26) + 96;
-rshift_n_times(C,N) ->
-    C+N.
+
+north_pole_id(Input) ->
+    RealRooms = decrypt_all_real_rooms(Input),
+    [NPRoom] = [{X,Y} || {X,Y} <- RealRooms, lists:prefix("north", X)],
+    element(2, NPRoom).
+
+decrypt_all_real_rooms(Input) ->
+    Rooms = file_to_list(Input),
+    ValidRooms = lists:filter(fun valid_room/1, Rooms),
+    lists:map(fun decrypt/1, ValidRooms).
+
+decrypt(RealRoom) ->
+    {match,[[EString, Shift]]} =
+        re:run(RealRoom, "([a-z-]*)([\\d]{1,3})",
+               [global,{capture, [1,2], list}]),
+    {string:strip(decrypt(EString, list_to_integer(Shift))), list_to_integer(Shift)}.
+
+decrypt(Estring, Shift) ->
+    lists:map(fun($-) ->
+                      $\s;
+                 (X) ->
+                      rshift_n_times(X, Shift)
+              end, Estring).
 
 sum_of_real_room_sector_ids(Input) ->
     Rooms = file_to_list(Input),
@@ -23,10 +43,14 @@ sum_of_real_room_sector_ids(Input) ->
                         list_to_integer(E) end, ValidRooms)).
 
 
-
 %%====================================================================
 %% Internal functions
 %%====================================================================
+
+rshift_n_times(C,N) ->
+    ((C - $a + N) rem 26) + $a.
+
+
 
 valid_room(L) ->
     [EncryptName, Hash] = re:split(L,
