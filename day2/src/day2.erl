@@ -223,4 +223,3 @@ get_code2([$D|T], d) ->
     get_code2(T, d);
 get_code2([],Current) ->
     Current.
-

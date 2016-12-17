@@ -9,27 +9,38 @@
 %% API functions
 %%====================================================================
 
+sum_of_real_room_sector_ids(Input) ->
+    Rooms = file_to_list(Input),
+    ValidRooms = lists:filter(fun valid_room/1, Rooms),
+    lists:sum(
+      lists:map(fun(X) ->
+                        {match,[E]} = re:run(X,
+                                             "(\\d){1,9}",
+                                             [{capture, first, list}]),
+                        list_to_integer(E) end, ValidRooms)).
+
 north_pole_id(Input) ->
     RealRooms = decrypt_all_real_rooms(Input),
     [NPRoom] = [{X,Y} || {X,Y} <- RealRooms, lists:prefix("north", X)],
     element(2, NPRoom).
+
+
+%%====================================================================
+%% Internal functions
+%%====================================================================
 
 decrypt_all_real_rooms(Input) ->
     Rooms = file_to_list(Input),
     ValidRooms = lists:filter(fun valid_room/1, Rooms),
     lists:map(fun decrypt/1, ValidRooms).
 
-%%====================================================================
-%% Internal functions
-%%====================================================================
-
 decrypt(RealRoom) ->
     {match,[[EString, ShiftStr]]} =
         re:run(RealRoom, "([a-z-]*)([\\d]{1,3})",
                [global,{capture, [1,2], list}]),
     ShiftInt = list_to_integer(ShiftStr),
-    {string:strip(decrypt(EString, 
-                          ShiftInt)), 
+    {string:strip(decrypt(EString,
+                          ShiftInt)),
      ShiftInt}.
 
 decrypt(Estring, Shift) ->
@@ -38,16 +49,6 @@ decrypt(Estring, Shift) ->
                  (X) ->
                       rshift_n_times(X, Shift)
               end, Estring).
-
-sum_of_real_room_sector_ids(Input) ->
-    Rooms = file_to_list(Input),
-    ValidRooms = lists:filter(fun valid_room/1, Rooms),
-    lists:sum(
-      lists:map(fun(X) -> 
-                        {match,[E]} = re:run(X, 
-                                             "(\\d){1,9}", 
-                                             [{capture, first, list}]), 
-                        list_to_integer(E) end, ValidRooms)).
 
 rshift_n_times(C,N) ->
     ((C - $a + N) rem 26) + $a.
@@ -58,11 +59,12 @@ valid_room(L) ->
                                    [{return,list}]),
     HashClean = lists:reverse(tl(lists:reverse(Hash))),
     PropL = plist_of_char_count(EncryptName, []),
-    NL = lists:sort(fun({Key1,V1},{Key2,V2}) -> 
-                            case V1 == V2 of true -> 
-                                    Key1 =< Key2; 
-                                _ -> V1 >= V2  
-                            end 
+    NL = lists:sort(fun({Key1,V1},{Key2,V2}) ->
+                            case V1 == V2 of
+                                true ->
+                                    Key1 =< Key2;
+                                _ -> V1 >= V2
+                            end
                     end , PropL),
     {[{C1,_},{C2,_},{C3,_},{C4,_},{C5,_}], _} = lists:split(5, NL),
     [C1,C2,C3,C4,C5] == HashClean.

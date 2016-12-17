@@ -83,4 +83,3 @@ big_test() ->
     ?assertEqual({-109,-15}, c1:first_visited_twice(Input)),
     ?assertEqual(124, c1:distance(c1:first_visited_twice(Input))),
     ?assertEqual(ExpectedDist, c1:distance(c1:last_pos(Input))).
-

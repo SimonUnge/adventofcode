@@ -26,4 +26,3 @@ get_9_again_test() ->
     Input = "LLRRRLLRLRULDDRR",
     ExpectedCode = 9,
     ?assertEqual(ExpectedCode, day2:get_code(Input)).
-

@@ -2,7 +2,8 @@
 
 %% API exports
 -export([valid_triangle/1,
-         file_to_list_of_rectangles/1, transform_from_vertical/1]).
+         file_to_list_of_rectangles/1,
+         transform_from_vertical/1]).
 
 %%====================================================================
 %% API functions
@@ -17,7 +18,7 @@ valid_triangle(_) ->
 file_to_list_of_rectangles(File) ->
     {ok, B} = file:read_file(File),
     PerLine = string:tokens(binary_to_list(B), "\n"),
-    lists:map(fun(X) -> 
+    lists:map(fun(X) ->
                       lists:map(fun(Y) ->
                                         list_to_integer(Y)
                                 end, string:tokens(X, " "))
