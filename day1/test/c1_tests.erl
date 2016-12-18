@@ -50,24 +50,24 @@ walk_r5_l5_r5_r3_test() ->
 dist_r2_l3_test() ->
     Input = "R2, L3",
     ExpectedDist = 5,
-    ?assertEqual(ExpectedDist, c1:distance(c1:last_pos(Input))).
+    ?assertEqual(ExpectedDist, c1:distance_to_last_pos(Input)).
 
 dist_r2_r2_r2_test() ->
     Input = "R2, R2, R2",
     ExpectedDist = 2,
     ?assertEqual(false, c1:first_visited_twice(Input)),
-    ?assertEqual(ExpectedDist, c1:distance(c1:last_pos(Input))).
+    ?assertEqual(ExpectedDist, c1:distance_to_last_pos(Input)).
 
 twice_test() ->
     Input = "R8, R4, R4, R8",
     ExpectedDist = 8,
     ?assertEqual({4,0}, c1:first_visited_twice(Input)),
-    ?assertEqual(ExpectedDist, c1:distance(c1:last_pos(Input))).
+    ?assertEqual(ExpectedDist, c1:distance_to_last_pos(Input)).
 
 dist_r5_l5_r5_r3_test() ->
     Input = "R5, L5, R5, R3",
     ExpectedDist = 12,
-    ?assertEqual(ExpectedDist, c1:distance(c1:last_pos(Input))).
+    ?assertEqual(ExpectedDist, c1:distance_to_last_pos(Input)).
 
 big_test() ->
     Input = "R2, L3, R2, R4, L2, L1, R2, R4, R1, L4, L5, R5, R5, R2,
@@ -81,5 +81,5 @@ big_test() ->
     R4, R2, L4, L4, L5, L1, R2, L5, L2, L3, R2, L2",
     ExpectedDist = 246,
     ?assertEqual({-109,-15}, c1:first_visited_twice(Input)),
-    ?assertEqual(124, c1:distance(c1:first_visited_twice(Input))),
-    ?assertEqual(ExpectedDist, c1:distance(c1:last_pos(Input))).
+    ?assertEqual(124, c1:distance_first_visited_twice(Input)),
+    ?assertEqual(ExpectedDist, c1:distance_to_last_pos(Input)).

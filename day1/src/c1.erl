@@ -1,16 +1,26 @@
 -module(c1).
 
 %% API exports
--export([walk/1,
-         distance/1,
-         last_pos/1,
-         visited_pos/1,
+-export([distance_to_last_pos/1,
+         distance_first_visited_twice/1]).
+
+%% Internal for tests
+-export([last_pos/1,
          first_visited_twice/1]).
 
 %%====================================================================
 %% API functions
 %%====================================================================
+distance_to_last_pos(S) ->
+    LastPos = last_pos(S),
+    distance(LastPos).
 
+distance_first_visited_twice(S) ->
+    distance(first_visited_twice(S)).
+
+%%====================================================================
+%% Internal functions
+%%====================================================================
 last_pos(S) ->
     {Pos,_} = walk(S),
     Pos.
@@ -40,10 +50,6 @@ first_visited_twice([H|T],PrevVP) ->
             first_visited_twice(T, [H|PrevVP])
     end.
 
-
-%%====================================================================
-%% Internal functions
-%%====================================================================
 get_range_of_pos_pos({X,XSteps},{Y, YSteps}) ->
     tl([{Xs,Ys} || Xs <- lists:seq(X,X+XSteps), Ys <- lists:seq(Y,Y+YSteps)]).
 get_range_of_neq_pos({X,XSteps},{Y, YSteps}) ->
